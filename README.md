@@ -1,0 +1,75 @@
+# 台指期槓桿計算器 App
+
+## 🚀 快速開始
+
+### 步驟 1：安裝 Flutter
+
+**以系統管理員身分**開啟 PowerShell，執行：
+
+```powershell
+# 方法一：執行安裝腳本
+cd "d:\Dropbox\ko1\自寫程式\TXF_Leverage"
+Set-ExecutionPolicy Bypass -Scope Process -Force
+.\install_flutter.ps1
+```
+
+**或手動安裝：**
+1. 下載 Flutter：https://docs.flutter.dev/get-started/install/windows/mobile
+2. 解壓縮到 `C:\flutter`
+3. 將 `C:\flutter\bin` 加入系統 PATH 環境變數
+4. 重新開啟 VS Code
+
+### 步驟 2：安裝 Android Studio
+
+1. 下載：https://developer.android.com/studio
+2. 安裝時選擇 Standard
+3. 完成後開啟，讓它下載 Android SDK
+
+### 步驟 3：驗證安裝
+
+```powershell
+flutter doctor
+```
+
+### 步驟 4：初始化專案
+
+```powershell
+cd "d:\Dropbox\ko1\自寫程式\TXF_Leverage\txf_leverage_app"
+flutter create . --platforms=android
+flutter pub get
+```
+
+### 步驟 5：執行 App
+
+```powershell
+# 列出裝置
+flutter devices
+
+# 執行（連接手機或啟動模擬器後）
+flutter run
+```
+
+---
+
+## 📱 編譯 APK
+
+```powershell
+# Debug 版本（測試用）
+flutter build apk --debug
+
+# Release 版本（上架用）
+flutter build apk --release
+
+# 輸出位置：build\app\outputs\flutter-apk\app-release.apk
+```
+
+---
+
+## 📝 上架前清單
+
+- [ ] 替換 AdMob App ID（AndroidManifest.xml）
+- [ ] 替換廣告單元 ID（ad_banner.dart）
+- [ ] 修改 applicationId（build.gradle）
+- [ ] 建立正式簽名金鑰
+- [ ] 準備 App 圖示和截圖
+- [ ] 撰寫 App 說明

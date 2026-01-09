@@ -1,0 +1,532 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="台指期槓桿">
+    <meta name="theme-color" content="#E53935">
+    
+    <!-- APP 圖示 (Base64 PNG) - 紅色圓圈背景 + TXFL 暗綠色文字 -->
+    <link rel="icon" type="image/png" href="data:image/png;base64,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">
+    <link rel="apple-touch-icon" href="data:image/png;base64,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">
+    
+    <title>台指期槓桿計算器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        :root {
+            --primary-color: #1565C0;
+            --green-color: #4CAF50;
+            --orange-color: #FF9800;
+            --bg-color: #FAFAFA;
+            --card-bg: #FFFFFF;
+            --text-color: #212121;
+            --text-secondary: #757575;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #64B5F6;
+                --green-color: #81C784;
+                --orange-color: #FFB74D;
+                --bg-color: #121212;
+                --card-bg: #1E1E1E;
+                --text-color: #FFFFFF;
+                --text-secondary: #AAAAAA;
+            }
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 12px;
+            padding-bottom: 80px;
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        
+        /* 價格區域 */
+        .price-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .price-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .price-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .price-input {
+            width: 100px;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--orange-color);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--orange-color);
+            text-align: center;
+            outline: none;
+        }
+        
+        .price-tag {
+            font-size: 9px;
+            padding: 2px 6px;
+            background-color: rgba(255, 152, 0, 0.15);
+            color: var(--orange-color);
+            border: 1px solid var(--orange-color);
+            border-radius: 3px;
+        }
+        
+        /* 期貨類型選擇 */
+        .segment-button {
+            display: flex;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--primary-color);
+            margin-bottom: 8px;
+        }
+        
+        .segment-button button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background-color: transparent;
+            color: var(--primary-color);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .segment-button button.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .segment-button button:not(:last-child) {
+            border-right: 1px solid var(--primary-color);
+        }
+        
+        .futures-info {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        
+        /* 輸入欄位 */
+        .input-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .input-group {
+            flex: 1;
+            position: relative;
+        }
+        
+        .input-group label {
+            position: absolute;
+            top: -8px;
+            left: 10px;
+            font-size: 12px;
+            background-color: var(--bg-color);
+            padding: 0 4px;
+            color: var(--text-secondary);
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px 10px;
+            font-size: 14px;
+            border: 1px solid #BDBDBD;
+            border-radius: 4px;
+            background-color: transparent;
+            color: var(--text-color);
+            outline: none;
+        }
+        
+        .input-group input:focus {
+            border-color: var(--primary-color);
+        }
+        
+        .input-group .suffix {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* 理論口數 */
+        .theory-box {
+            background-color: rgba(21, 101, 192, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        
+        .theory-box .label {
+            font-size: 14px;
+            color: var(--primary-color);
+        }
+        
+        .theory-box .value {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        /* 結果卡片 */
+        .result-card {
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .result-card.conservative {
+            background-color: rgba(76, 175, 80, 0.1);
+            border: 1.5px solid var(--green-color);
+        }
+        
+        .result-card.aggressive {
+            background-color: rgba(255, 152, 0, 0.1);
+            border: 1.5px solid var(--orange-color);
+        }
+        
+        .result-label {
+            padding: 4px 10px;
+            border-radius: 4px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        
+        .result-card.conservative .result-label {
+            background-color: var(--green-color);
+        }
+        
+        .result-card.aggressive .result-label {
+            background-color: var(--orange-color);
+        }
+        
+        .result-values {
+            display: flex;
+            flex: 1;
+            justify-content: space-around;
+            text-align: center;
+        }
+        
+        .result-item .number {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        
+        .result-item .exposure {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .result-card.conservative .number,
+        .result-card.conservative .exposure {
+            color: var(--green-color);
+        }
+        
+        .result-card.aggressive .number,
+        .result-card.aggressive .exposure {
+            color: var(--orange-color);
+        }
+        
+        .result-item .unit {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        
+        /* 風險警語 */
+        .warning-box {
+            background-color: rgba(255, 193, 7, 0.15);
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 12px;
+        }
+        
+        .warning-box p {
+            font-size: 11px;
+            color: #F57C00;
+            text-align: center;
+        }
+        
+        /* 底部說明 */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-bg);
+            padding: 8px;
+            text-align: center;
+            font-size: 10px;
+            color: var(--text-secondary);
+            border-top: 1px solid #E0E0E0;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .footer {
+                border-top-color: #333;
+            }
+            .input-group label {
+                background-color: var(--bg-color);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 價格輸入 -->
+        <div class="price-section">
+            <div class="price-display">
+                <span class="price-label" id="cid-label">TXF</span>
+                <input type="number" class="price-input" id="price-input" placeholder="22350" inputmode="numeric">
+                <span class="price-tag">手動</span>
+            </div>
+        </div>
+        
+        <!-- 期貨類型選擇 -->
+        <div class="segment-button">
+            <button id="btn-tx" class="active" onclick="selectType(0)">大台</button>
+            <button id="btn-mtx" onclick="selectType(1)">小台</button>
+            <button id="btn-tmf" onclick="selectType(2)">微台</button>
+        </div>
+        
+        <div class="futures-info" id="futures-info">大台(TX) ｜每點 200 元</div>
+        
+        <!-- 輸入欄位 -->
+        <div class="input-row">
+            <div class="input-group">
+                <label>權益數</label>
+                <input type="number" id="equity-input" value="3000000" inputmode="numeric">
+                <span class="suffix">元</span>
+            </div>
+            <div class="input-group">
+                <label>槓桿倍率</label>
+                <input type="number" id="leverage-input" value="2" step="0.1" inputmode="decimal">
+                <span class="suffix">倍</span>
+            </div>
+        </div>
+        
+        <!-- 理論口數 -->
+        <div class="theory-box">
+            <span class="label">理論口數: </span>
+            <span class="value" id="theory-value">0.00 口</span>
+        </div>
+        
+        <!-- 保守方案 -->
+        <div class="result-card conservative">
+            <span class="result-label">保守</span>
+            <div class="result-values">
+                <div class="result-item">
+                    <div class="number" id="cons-contracts">0</div>
+                    <div class="unit">口</div>
+                </div>
+                <div class="result-item">
+                    <div class="number" id="cons-leverage">0.00</div>
+                    <div class="unit">倍</div>
+                </div>
+                <div class="result-item">
+                    <div class="exposure" id="cons-exposure">0</div>
+                    <div class="unit">曝險</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 積極方案 -->
+        <div class="result-card aggressive">
+            <span class="result-label">積極</span>
+            <div class="result-values">
+                <div class="result-item">
+                    <div class="number" id="aggr-contracts">0</div>
+                    <div class="unit">口</div>
+                </div>
+                <div class="result-item">
+                    <div class="number" id="aggr-leverage">0.00</div>
+                    <div class="unit">倍</div>
+                </div>
+                <div class="result-item">
+                    <div class="exposure" id="aggr-exposure">0</div>
+                    <div class="unit">曝險</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 風險警語 -->
+        <div class="warning-box">
+            <p>⚠️ 期貨風險高，可能損失超過本金，建議槓桿3倍以下</p>
+        </div>
+    </div>
+    
+    <div class="footer">
+        台指期槓桿計算器 Web 版 | 資料僅供參考
+    </div>
+    
+    <script>
+        // 商品設定
+        const futuresConfig = {
+            0: { name: '大台(TX)', cid: 'TXF', pointValue: 200 },
+            1: { name: '小台(MTX)', cid: 'MXF', pointValue: 50 },
+            2: { name: '微台(TMF)', cid: 'TMF', pointValue: 10 }
+        };
+        
+        let currentType = 0;
+        
+        // DOM 元素
+        const priceInput = document.getElementById('price-input');
+        const equityInput = document.getElementById('equity-input');
+        const leverageInput = document.getElementById('leverage-input');
+        const cidLabel = document.getElementById('cid-label');
+        const futuresInfo = document.getElementById('futures-info');
+        const theoryValue = document.getElementById('theory-value');
+        
+        // 載入儲存的設定
+        function loadSettings() {
+            const saved = localStorage.getItem('txf_calculator_settings');
+            if (saved) {
+                try {
+                    const settings = JSON.parse(saved);
+                    currentType = settings.type ?? 0;
+                    priceInput.value = settings.price ?? '';
+                    equityInput.value = settings.equity ?? '3000000';
+                    leverageInput.value = settings.leverage ?? '2';
+                    
+                    // 更新按鈕狀態
+                    updateButtonState();
+                } catch (e) {
+                    console.error('載入設定失敗', e);
+                }
+            }
+            updateDisplay();
+            calculate();
+        }
+        
+        // 儲存設定
+        function saveSettings() {
+            const settings = {
+                type: currentType,
+                price: priceInput.value,
+                equity: equityInput.value,
+                leverage: leverageInput.value
+            };
+            localStorage.setItem('txf_calculator_settings', JSON.stringify(settings));
+        }
+        
+        // 更新按鈕狀態
+        function updateButtonState() {
+            document.getElementById('btn-tx').classList.toggle('active', currentType === 0);
+            document.getElementById('btn-mtx').classList.toggle('active', currentType === 1);
+            document.getElementById('btn-tmf').classList.toggle('active', currentType === 2);
+        }
+        
+        // 選擇期貨類型
+        function selectType(type) {
+            currentType = type;
+            updateButtonState();
+            updateDisplay();
+            calculate();
+            saveSettings();
+        }
+        
+        // 更新顯示
+        function updateDisplay() {
+            const config = futuresConfig[currentType];
+            cidLabel.textContent = config.cid;
+            futuresInfo.textContent = `${config.name} ｜每點 ${config.pointValue} 元`;
+        }
+        
+        // 數字格式化
+        function formatNumber(num) {
+            return num.toLocaleString('zh-TW');
+        }
+        
+        // 計算
+        function calculate() {
+            const price = parseFloat(priceInput.value) || 0;
+            const equity = parseFloat(equityInput.value) || 0;
+            const leverage = parseFloat(leverageInput.value) || 0;
+            const pointValue = futuresConfig[currentType].pointValue;
+            
+            if (price <= 0 || equity <= 0 || pointValue <= 0) {
+                theoryValue.textContent = '-- 口';
+                document.getElementById('cons-contracts').textContent = '--';
+                document.getElementById('cons-leverage').textContent = '--';
+                document.getElementById('cons-exposure').textContent = '--';
+                document.getElementById('aggr-contracts').textContent = '--';
+                document.getElementById('aggr-leverage').textContent = '--';
+                document.getElementById('aggr-exposure').textContent = '--';
+                return;
+            }
+            
+            // 理論口數
+            const theory = (equity * leverage) / (price * pointValue);
+            const floorContracts = Math.floor(theory);
+            const ceilContracts = Math.ceil(theory);
+            
+            // 實際槓桿
+            const consLeverage = (floorContracts * price * pointValue) / equity;
+            const aggrLeverage = (ceilContracts * price * pointValue) / equity;
+            
+            // 曝險金額
+            const consExposure = floorContracts * price * pointValue;
+            const aggrExposure = ceilContracts * price * pointValue;
+            
+            // 更新顯示
+            theoryValue.textContent = theory.toFixed(2) + ' 口';
+            
+            document.getElementById('cons-contracts').textContent = floorContracts;
+            document.getElementById('cons-leverage').textContent = consLeverage.toFixed(2);
+            document.getElementById('cons-exposure').textContent = formatNumber(Math.round(consExposure));
+            
+            document.getElementById('aggr-contracts').textContent = ceilContracts;
+            document.getElementById('aggr-leverage').textContent = aggrLeverage.toFixed(2);
+            document.getElementById('aggr-exposure').textContent = formatNumber(Math.round(aggrExposure));
+        }
+        
+        // 事件監聽
+        priceInput.addEventListener('input', () => { calculate(); saveSettings(); });
+        equityInput.addEventListener('input', () => { calculate(); saveSettings(); });
+        leverageInput.addEventListener('input', () => { calculate(); saveSettings(); });
+        
+        // 頁面載入時初始化
+        document.addEventListener('DOMContentLoaded', loadSettings);
+        
+        // 頁面關閉前儲存
+        window.addEventListener('beforeunload', saveSettings);
+    </script>
+</body>
+</html>
+
+

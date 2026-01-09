@@ -1,0 +1,54 @@
+{
+  "name": "txf-leverage-app",
+  "version": "1.0.0",
+  "loop": {
+    "enabled": true,
+    "maxIterations": 10,
+    "taskFile": ".claude/tasks/development-loop.md",
+    "backlogFile": ".claude/tasks/product_backlog.md",
+    "phases": [
+      {
+        "name": "research",
+        "mode": "pm",
+        "description": "研究待開發功能"
+      },
+      {
+        "name": "generate-spec",
+        "mode": "pm",
+        "description": "產生功能規格文件"
+      },
+      {
+        "name": "execute",
+        "mode": "dev",
+        "description": "實作功能"
+      },
+      {
+        "name": "validate",
+        "mode": "test",
+        "commands": [
+          "flutter analyze",
+          "flutter build apk --debug"
+        ],
+        "description": "驗證功能"
+      },
+      {
+        "name": "fix",
+        "mode": "dev",
+        "maxRetries": 3,
+        "description": "修復問題"
+      },
+      {
+        "name": "commit",
+        "mode": "dev",
+        "description": "記錄完成"
+      }
+    ],
+    "onError": "rollback",
+    "outputDir": ".claude/output"
+  },
+  "settings": {
+    "language": "zh-TW",
+    "codeStyle": "flutter",
+    "commentLanguage": "繁體中文"
+  }
+}
