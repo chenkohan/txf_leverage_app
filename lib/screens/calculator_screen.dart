@@ -7,8 +7,10 @@ import 'dart:convert';
 import 'dart:io';
 import '../widgets/ad_banner.dart';
 import '../models/calculation_record.dart';
+import '../services/subscription_service.dart';
 import 'settings_screen.dart';
 import 'history_screen.dart';
+import 'subscription_screen.dart';
 
 class CalculatorScreen extends StatefulWidget {
   final ThemeMode currentThemeMode;
@@ -34,6 +36,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
   String _lastError = '';
   bool _isNightSession = false;
 
+  // 訂閱服務
+  final _subscriptionService = SubscriptionService();
+
   final _equityController = TextEditingController(text: '3000000');
   final _leverageController = TextEditingController(text: '2');
   final _manualPriceController = TextEditingController();
@@ -50,17 +55,23 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _subscriptionService.addListener(_onSubscriptionChanged);
     _loadSavedSettings();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _subscriptionService.removeListener(_onSubscriptionChanged);
     _saveSettings();
     _equityController.dispose();
     _leverageController.dispose();
     _manualPriceController.dispose();
     super.dispose();
+  }
+
+  void _onSubscriptionChanged() {
+    if (mounted) setState(() {});
   }
 
   @override
@@ -71,6 +82,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
   }
 
   Future<void> _loadSavedSettings() async {
+    // 免費版：不載入儲存的設定（每次都要手動輸入）
+    if (_subscriptionService.isFree) {
+      _fetchPrice();
+      return;
+    }
+    
     try {
       final prefs = await SharedPreferences.getInstance();
       setState(() {
@@ -85,6 +102,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
   }
 
   Future<void> _saveSettings() async {
+    // 免費版：不儲存設定
+    if (_subscriptionService.isFree) return;
+    
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt('futuresType', _futuresType);
@@ -94,6 +114,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
   }
 
   Future<void> _savePriceRecord(double price, int type) async {
+    // 免費版：不儲存價格紀錄
+    if (_subscriptionService.isFree) return;
+    
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setDouble('savedPrice_$type', price);
@@ -102,6 +125,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
   }
 
   Future<double?> _loadSavedPrice(int type) async {
+    // 免費版：不載入儲存的價格
+    if (_subscriptionService.isFree) return null;
+    
     try {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getDouble('savedPrice_$type');
@@ -352,6 +378,16 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
 
   /// 儲存計算紀錄到歷史
   Future<void> _saveCalculationRecord() async {
+    // 免費版：顯示升級提示
+    if (_subscriptionService.isFree) {
+      final upgraded = await UpgradePromptDialog.show(
+        context,
+        feature: '歷史紀錄儲存',
+        description: '升級 Premium 即可儲存計算紀錄，方便日後查閱',
+      );
+      if (!upgraded) return;
+    }
+    
     // 只有在有效計算結果時才儲存
     if (_currentPrice <= 0 || _calc <= 0) return;
 
@@ -470,7 +506,16 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
                         const SizedBox(width: 4),
                         IconButton(
                           icon: const Icon(Icons.history, size: 20),
-                          onPressed: () {
+                          onPressed: () async {
+                            // 免費版：顯示升級提示
+                            if (_subscriptionService.isFree) {
+                              await UpgradePromptDialog.show(
+                                context,
+                                feature: '歷史紀錄',
+                                description: '升級 Premium 即可查看和儲存計算歷史',
+                              );
+                              return;
+                            }
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -481,6 +526,27 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
                           tooltip: '歷史紀錄',
+                        ),
+                        const SizedBox(width: 4),
+                        IconButton(
+                          icon: Icon(
+                            Icons.workspace_premium,
+                            size: 20,
+                            color: _subscriptionService.isPremium 
+                                ? Colors.amber[600] 
+                                : Colors.grey,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SubscriptionScreen(),
+                              ),
+                            );
+                          },
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          tooltip: _subscriptionService.isPremium ? 'Premium 會員' : '升級 Premium',
                         ),
                         const SizedBox(width: 4),
                         IconButton(
@@ -577,7 +643,11 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
                 ),
               ),
             ),
-            const Expanded(flex: 20, child: AdBannerWidget()),
+            // Premium 用戶不顯示廣告
+            if (_subscriptionService.isFree)
+              const Expanded(flex: 20, child: AdBannerWidget())
+            else
+              const SizedBox(height: 16),
           ],
         ),
       ),
