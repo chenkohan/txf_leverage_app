@@ -82,9 +82,14 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
   }
 
   Future<void> _loadSavedSettings() async {
-    // 免費版：不載入儲存的設定（每次都要手動輸入）
+    // 免費版：不載入儲存的設定，且不自動連網查價（需手動輸入）
     if (_subscriptionService.isFree) {
-      _fetchPrice();
+      setState(() {
+        _isLoadingPrice = false;
+        _isManualPrice = true;
+        _priceSource = '手動';
+        _currentPrice = 0.0;
+      });
       return;
     }
     
@@ -371,7 +376,16 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
   void _onTypeChanged(Set<int> s) {
     setState(() => _futuresType = s.first);
     _saveSettings();
-    _fetchPrice();
+    // 免費版：不自動查價，需手動輸入
+    if (!_subscriptionService.isFree) {
+      _fetchPrice();
+    } else {
+      setState(() {
+        _currentPrice = 0.0;
+        _priceSource = '手動';
+        _isManualPrice = true;
+      });
+    }
   }
 
   void _onInput(String _) { setState(() {}); _saveSettings(); }
@@ -499,7 +513,14 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
                         ),
                         IconButton(
                           icon: const Icon(Icons.refresh, size: 20),
-                          onPressed: _isLoadingPrice ? null : _fetchPrice,
+                          onPressed: _isLoadingPrice ? null : () {
+                            // 免費版：點擊重新整理顯示手動輸入對話框
+                            if (_subscriptionService.isFree) {
+                              _showManualPriceDialog();
+                            } else {
+                              _fetchPrice();
+                            }
+                          },
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
                         ),
