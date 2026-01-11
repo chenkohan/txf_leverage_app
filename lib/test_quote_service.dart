@@ -118,17 +118,25 @@ class _QuoteTestScreenState extends State<QuoteTestScreen> {
         }
       }
 
-      // 測試 6: 直接使用 Yahoo Finance
-      _log('\n🧪 測試 6: 直接使用 Yahoo Finance (SPY)');
-      final yahooResult = await _quoteService.getQuote('SPY', source: QuoteSource.yahooFinance);
-      if (yahooResult.isSuccess) {
-        _log('✅ SPY: \$${yahooResult.quote!.currentPrice.toStringAsFixed(2)}');
-        _log('   來源: ${yahooResult.source.name}');
+      // 測試 6: 驗證 Finnhub 已停用
+      _log('\n🧪 測試 6: 驗證 Finnhub 已停用 (應自動轉向 Yahoo Finance)');
+      final finnhubResult = await _quoteService.getQuote('SPY', source: QuoteSource.finnhub);
+      if (finnhubResult.isSuccess) {
+        _log('✅ SPY: \$${finnhubResult.quote!.currentPrice.toStringAsFixed(2)}');
+        _log('   來源: ${finnhubResult.source.name} (Finnhub 已停用，自動使用 Yahoo)');
       } else {
-        _log('❌ 失敗: ${yahooResult.errorMessage}');
+        _log('❌ 失敗: ${finnhubResult.errorMessage}');
       }
+      
+      // 測試 7: 服務狀態檢查
+      _log('\n🧪 測試 7: 服務狀態檢查');
+      final status = _quoteService.getStatus();
+      _log('📊 主要來源: ${status['primarySource']}');
+      _log('📊 台灣期交所支援: ${status['taifexSupport']}');
+      _log('📊 Finnhub 狀態: ${status['finnhubStatus']}');
 
       _log('\n✅ 所有測試完成！');
+      _log('📌 報價來源順序: 台灣期交所 → Yahoo Finance → Finnhub (停用)');
 
     } catch (e) {
       _log('❌ 測試發生錯誤: $e');
