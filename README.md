@@ -92,3 +92,89 @@ flutter build apk --release
 - [ ] 建立正式簽名金鑰
 - [ ] 準備 App 圖示和截圖
 - [ ] 撰寫 App 說明
+
+---
+
+## 📊 報價服務架構
+
+本專案整合多個報價來源，提供自動備援機制：
+
+### 報價來源
+
+| 來源 | 用途 | 免費限制 | 期貨支援 |
+|------|------|----------|----------|
+| **Finnhub** (主) | 美股即時報價 | 60次/分鐘 | ❌ 僅 ETF |
+| **Yahoo Finance** (備援) | 美股/期貨延遲報價 | 無限制 | ✅ 完整支援 |
+| **台灣期貨交易所** | 台指期報價 | 免費即時 | ✅ 台灣期貨 |
+
+### 使用方式
+
+```dart
+import 'package:txf_leverage_app/services/services.dart';
+
+// 初始化
+final quoteService = QuoteService();
+await quoteService.initialize();
+
+// 取得股票報價（自動備援）
+final result = await quoteService.getQuote('AAPL');
+if (result.isSuccess) {
+  print('${result.quote!.symbol}: \$${result.quote!.currentPrice}');
+  print('來源: ${result.source.name}');
+}
+
+// 取得期貨報價（使用 Yahoo Finance）
+final futuresResult = await quoteService.getFuturesQuote('ES');
+if (futuresResult.isSuccess) {
+  print('ES 期貨: \$${futuresResult.quote!.currentPrice}');
+}
+
+// 批次取得主要指數期貨
+final majorFutures = await quoteService.getMajorIndexFutures();
+majorFutures.forEach((symbol, result) {
+  if (result.isSuccess) {
+    print('$symbol: \$${result.quote!.currentPrice}');
+  }
+});
+```
+
+### 支援的期貨代碼
+
+- **美國指數期貨**: ES (S&P 500), NQ (Nasdaq 100), YM (Dow Jones), RTY (Russell 2000)
+- **微型期貨**: MES, MNQ, MYM
+- **商品期貨**: CL (原油), GC (黃金), SI (白銀), NG (天然氣)
+
+---
+
+## 🔧 環境變數設定
+
+環境變數統一存放於 `D:\Dropbox\FlutterProjects\.env`：
+
+```env
+# Finnhub API（可選，有則優先使用）
+FINNHUB_API_KEY=your_api_key
+
+# Yahoo Finance 不需要 API Key
+```
+
+---
+
+## 📁 專案結構
+
+```
+lib/
+├── main.dart                 # App 進入點
+├── screens/
+│   ├── calculator_screen.dart  # 槓桿計算器畫面
+│   └── us_stock_screen.dart    # 美股查詢畫面
+├── services/
+│   ├── services.dart           # 服務匯出
+│   ├── env_service.dart        # 環境變數服務
+│   ├── quote_service.dart      # 統一報價服務（含備援機制）
+│   ├── finnhub_service.dart    # Finnhub API 服務
+│   ├── yahoo_finance_service.dart  # Yahoo Finance 服務
+│   └── subscription_service.dart   # 訂閱服務
+└── widgets/
+    ├── ad_banner.dart          # 廣告元件
+    └── us_stock_widgets.dart   # 美股相關元件
+```
