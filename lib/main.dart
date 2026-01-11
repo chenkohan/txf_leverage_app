@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/calculator_screen.dart';
 import 'services/subscription_service.dart';
+import 'services/finnhub_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
+  
+  // 載入環境變數
+  await dotenv.load(fileName: '.env');
+  
+  // 設定 Finnhub API Key
+  final finnhubKey = dotenv.env['FINNHUB_API_KEY'];
+  if (finnhubKey != null && finnhubKey.isNotEmpty) {
+    FinnhubService.setApiKey(finnhubKey);
+  }
   
   // 初始化訂閱服務
   await SubscriptionService().initialize();
