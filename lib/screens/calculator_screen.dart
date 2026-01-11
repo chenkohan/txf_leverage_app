@@ -82,7 +82,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
   }
 
   Future<void> _loadSavedSettings() async {
-    // 免費版：不載入儲存的設定，且不自動連網查價（需手動輸入）
+    // 免費版：啟動時歸零，不自動連網查價
     if (_subscriptionService.isFree) {
       setState(() {
         _isLoadingPrice = false;
@@ -118,8 +118,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
     } catch (e) {}
   }
 
-  Future<void> _savePriceRecord(double price, int type) async {
-    // 免費版：不儲存價格紀錄
+  Future<void> _savePriceRecord(double price, int type, {bool isManual = false}) async {
+    // 免費版：不儲存到 SharedPreferences（價格只在記憶體中保留到 App 關閉）
     if (_subscriptionService.isFree) return;
     
     try {
@@ -310,7 +310,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
                   _priceError = '';
                   _isManualPrice = true;
                 });
-                await _savePriceRecord(price, _futuresType);
+                await _savePriceRecord(price, _futuresType, isManual: true);
                 Navigator.pop(context);
               }
             },
@@ -376,16 +376,11 @@ class _CalculatorScreenState extends State<CalculatorScreen> with WidgetsBinding
   void _onTypeChanged(Set<int> s) {
     setState(() => _futuresType = s.first);
     _saveSettings();
-    // 免費版：不自動查價，需手動輸入
+    // 免費版：不自動查價，但保留已輸入的價格（只改變每點價格）
     if (!_subscriptionService.isFree) {
       _fetchPrice();
-    } else {
-      setState(() {
-        _currentPrice = 0.0;
-        _priceSource = '手動';
-        _isManualPrice = true;
-      });
     }
+    // 免費版不需要做任何事，價格保持不變，只有每點價格會改變
   }
 
   void _onInput(String _) { setState(() {}); _saveSettings(); }
